@@ -6,24 +6,15 @@ from bg_remover import BackgroundRemover
 
 app = FastAPI(title="Background Removal API")
 
-# -------------------------------------------------
-# CORS (safe for development)
-# -------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # restrict in production
+    allow_origins=["*"],   
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# -------------------------------------------------
-# Singleton model instance
-# -------------------------------------------------
 bg_remover = BackgroundRemover()
 
-# -------------------------------------------------
-# Serve frontend
-# -------------------------------------------------
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 
@@ -32,9 +23,6 @@ def serve_frontend():
     with open("frontend/index.html", "r", encoding="utf-8") as f:
         return f.read()
 
-# -------------------------------------------------
-# API: Remove Background
-# -------------------------------------------------
 @app.post("/remove-bg")
 async def remove_background(file: UploadFile = File(...)):
     if not file.content_type or not file.content_type.startswith("image/"):
